@@ -1,0 +1,18 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+ActionBar {
+  background-color: #4299e1;
+  color: white;
+}
+
+.input {
+  background-color: #f3f4f6;
+  border-color: #e5e7eb;
+  border-width: 1;
+  border-radius: 4;
+  padding: 12;
+  margin-bottom: 16;
+  color: #1f2937;
+}

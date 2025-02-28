@@ -1,0 +1,3 @@
+› Removed "main": "node_modules/expo/AppEntry.js" from package.json because we recommend using index.js as main instead
+
+📦 Using npm to install packages.
