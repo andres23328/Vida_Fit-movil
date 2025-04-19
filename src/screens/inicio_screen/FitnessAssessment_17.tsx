@@ -79,7 +79,7 @@ const FitnessAssessment: React.FC = () => {
         cualquier desequilibrio o debilidad que podamos abordar.
       </Text>
 
-      <NextButton onPress={() => navigation.navigate('PersonalizedWelcome')} />
+      <NextButton onPress={() => navigation.navigate('Login')} />
     </View>
   );
 };

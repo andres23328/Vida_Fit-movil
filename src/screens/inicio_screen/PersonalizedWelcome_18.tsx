@@ -4,6 +4,7 @@ import { useNavigation } from '@react-navigation/native';
 import NextButton from '../../components/NextButton'; // Asegúrate de que NextButton esté adaptado a React Native
 import { RootStackParamList } from '../../components/types'; // Asegúrate de tener este archivo de tipos
 import { StackNavigationProp } from '@react-navigation/stack';
+import { AuthContext } from '../../context/AuthContext';
 
 // Definir el tipo para la navegación
 type PersonalizedWelcomeNavigationProp = StackNavigationProp<RootStackParamList, 'PersonalizedWelcome'>;

@@ -10,6 +10,10 @@ import registrationReducer from './Slice/registrationSlice';
 import responsesReducer from './redux/responsesSlice';
 import weeklyScheduleReducer from './Slice/WeeklyScheduleSlice';
 import schedulePreferenceReducer from './Slice/SchedulePreferenceSlice';
+import membresiaReducer from './Slice/membresiaSlice';
+import clasesReducer from './Slice/clasesSlice';
+import bodyReducer from './Slice/bodySlice';
+
 
 const store = configureStore({
   reducer: {
@@ -24,6 +28,9 @@ const store = configureStore({
     responses: responsesReducer, 
     weeklySchedule: weeklyScheduleReducer,
     schedule: schedulePreferenceReducer,
+    membresia: membresiaReducer,
+    clases: clasesReducer,
+    body: bodyReducer,
 
   },
 });

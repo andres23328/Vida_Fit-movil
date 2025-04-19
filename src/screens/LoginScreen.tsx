@@ -9,6 +9,7 @@ import { StackNavigationProp } from '@react-navigation/stack';
 type RootStackParamList = {
   Login: undefined;
   Home: undefined;
+  Main: undefined;
 };
 
 type LoginScreenNavigationProp = StackNavigationProp<RootStackParamList, 'Login'>;
@@ -20,6 +21,7 @@ interface LoginScreenProps {
 const LoginScreen: React.FC<LoginScreenProps> = ({ navigation }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false); 
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const [darkMode, setDarkMode] = useState(false);
@@ -34,7 +36,7 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ navigation }) => {
   useEffect(() => {
     console.log("Usuario en AuthContext:", user);
     if (user) {
-      navigation.replace("Home");
+      navigation.reset({ index: 0,  routes: [{ name: 'Main', state: { index: 0, routes: [{ name: 'Home' }] } }], });
     }
   }, [user, navigation]);
   
@@ -45,7 +47,7 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ navigation }) => {
       setError('');
       const userCredential = await signInWithEmailAndPassword(auth, email, password);
       setUser(userCredential.user);
-      navigation.replace('Home');
+      navigation.replace('Main');
     } catch (err) {
       setError('Correo o contraseña incorrectos');
     } finally {
@@ -81,25 +83,33 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ navigation }) => {
           autoCapitalize='none'
           style={[styles.input, { backgroundColor: darkMode ? '#333' : 'white' }]}
         />
+
         <TextInput
-          label='Contraseña'
+          label="Contraseña"
           value={password}
           onChangeText={setPassword}
-          secureTextEntry
-          mode='outlined'
+          secureTextEntry={!showPassword}
+          mode="outlined"
           style={[styles.input, { backgroundColor: darkMode ? '#333' : 'white' }]}
+          right={
+            <TextInput.Icon
+              icon={showPassword ? 'eye-off' : 'eye'}
+              onPress={() => setShowPassword(!showPassword)}
+            />
+          }
         />
+        
         {error ? <HelperText type='error'>{error}</HelperText> : null}
-        <Button mode='contained' onPress={handleLogin} loading={loading} disabled={loading}>
+        <Button mode='contained' style={styles.button} labelStyle={styles.text} onPress={handleLogin} loading={loading} disabled={loading}>
           Iniciar sesión
         </Button>
         <TouchableOpacity onPress={handlePasswordReset}>
           <Text style={styles.forgotPasswordText}>¿Olvidaste tu contraseña?</Text>
         </TouchableOpacity>
       </View>
-      <TouchableOpacity style={styles.toggleButton} onPress={() => setDarkMode(!darkMode)}>
+{/*       <TouchableOpacity style={styles.toggleButton} onPress={() => setDarkMode(!darkMode)}>
         <Text style={styles.toggleButtonText}>{darkMode ? 'Modo Claro 🌞' : 'Modo Oscuro 🌙'}</Text>
-      </TouchableOpacity>
+      </TouchableOpacity> */}
     </View>
   );
 };
@@ -113,9 +123,11 @@ const styles = StyleSheet.create({
   lightCard: { backgroundColor: 'white' },
   darkCard: { backgroundColor: '#1f1f1f' },
   input: { height: 60, marginVertical: 10 },
-  forgotPasswordText: { color: '#525FE1', textAlign: 'center', marginTop: 10, textDecorationLine: 'underline' },
+  forgotPasswordText: { color: '#525FE1', textAlign: 'center', marginTop: 10, textDecorationLine: 'underline', fontFamily: 'Poppins_400Regular' },
   toggleButton: { marginTop: 10, padding: 10, borderRadius: 20, backgroundColor: '#525FE1' },
-  toggleButtonText: { color: 'white', textAlign: 'center' },
+  toggleButtonText: { color: 'white', textAlign: 'center', fontFamily: 'Poppins_400Regular' },
+  text: { fontFamily: 'Poppins_600SemiBold' },
+  button: {backgroundColor: '#2ECC71'},
 });
 
 export default LoginScreen;

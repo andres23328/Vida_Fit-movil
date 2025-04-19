@@ -66,10 +66,11 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: 26,
-    fontWeight: '700',
+    fontWeight: '600',
     textAlign: 'center',
     color: '#111827',
     marginBottom: 24,
+    fontFamily: 'Poppins_600SemiBold',
   },
   cardContainer: {
     width: '100%',
@@ -97,10 +98,11 @@ const styles = StyleSheet.create({
     marginRight: 16,
   },
   cardText: {
-    fontSize: 18,
+    fontSize: 15,
     color: '#F9FAFB',
     fontWeight: '500',
     marginLeft: -10,
+    fontFamily: 'Poppins_400Regular',
   },
 });
 

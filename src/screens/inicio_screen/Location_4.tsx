@@ -61,8 +61,9 @@ const styles = StyleSheet.create({
     fontSize: 24,
     textAlign: 'center',
     marginBottom: 24,
-    fontWeight: '700',
+    fontWeight: '600',
     color: '#111827', // Gris oscuro
+    fontFamily: 'Poppins_600SemiBold',
   },
   optionsContainer: {
     flexDirection: 'row',
@@ -93,6 +94,7 @@ const styles = StyleSheet.create({
     color: '#fff',
     fontWeight: '600',
     textAlign: 'center',
+    fontFamily: 'Poppins_400Regular',
   },
 });
 

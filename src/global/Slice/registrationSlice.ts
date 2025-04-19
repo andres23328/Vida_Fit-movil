@@ -23,8 +23,9 @@ const registrationSlice = createSlice({
       const { field, value } = action.payload;
       state[field] = value;
     },
+    resetForm: () => initialState,
   },
 });
 
-export const { updateField } = registrationSlice.actions;
+export const { updateField, resetForm  } = registrationSlice.actions;
 export default registrationSlice.reducer;

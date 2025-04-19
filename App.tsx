@@ -1,17 +1,24 @@
 import React, { useEffect, useState } from 'react';
+import { ScrollView } from 'react-native';
+import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { createDrawerNavigator, DrawerContentComponentProps } from "@react-navigation/drawer";
-import { DrawerNavigationProp } from '@react-navigation/drawer';
 import { Provider as PaperProvider, MD3DarkTheme, MD3LightTheme, IconButton } from 'react-native-paper';
 import { onAuthStateChanged, signOut, User } from 'firebase/auth';
 import { auth } from './src/config/firebase';
 import { Provider } from 'react-redux';
 import store from './src/global/store';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
-import { useNavigation } from "@react-navigation/native";
 import { DrawerActions } from "@react-navigation/native";
 import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
+import { useFonts, Poppins_400Regular, Poppins_600SemiBold } from '@expo-google-fonts/poppins';
+import * as Font from 'expo-font';
+import { setCustomText } from 'react-native-global-props'; // ⬅️ AÑADE ESTA LÍNEA
+import BottomTabNavigator from './src/components/BottomTabNavigator';
+import GraficasNavigator from './src/components/GraficasNavigator';
+
+
 
 import { AuthProvider, AuthContext } from "./src/context/AuthContext";
 // Importación de pantallas
@@ -24,7 +31,9 @@ import MembershipScreen from './src/screens/sub-screens/MembershipScreen';
 import IMCScreen from './src/screens/sub-screens/IMCScreen';
 import ChartsScreen from './src/screens/sub-screens/ChartScreen';
 import BodyScreen from './src/screens/sub-screens/BodyScreens';
-
+import Predict from './src/screens/sub-screens/Predict';
+import Reporte from './src/screens/sub-screens/Reporte';
+import CalendarScreen from './src/screens/sub-screens/CalendarScreen';
 // Pantallas de bienvenida/inicio
 import Welcome from './src/screens/inicio_screen/Welcome_1';
 import Goals from './src/screens/inicio_screen/Goals_2';
@@ -44,16 +53,46 @@ import TrainingReminder from './src/screens/inicio_screen/TrainingReminder_15';
 import CalibrationInfo from './src/screens/inicio_screen/CalibrationInfo_16';
 import FitnessAssessment from './src/screens/inicio_screen/FitnessAssessment_17';
 import PersonalizedWelcome from './src/screens/inicio_screen/PersonalizedWelcome_18';
+import { RootStackParamList } from './src/components/types';
+
+import SplashScreen from './src/screens/inicio_screen/SplashScreen';
 
 
-const Stack = createNativeStackNavigator();
-const Drawer = createDrawerNavigator();
+const Stack = createNativeStackNavigator<RootStackParamList>();
+
+
 
 export default function App() {
   const [user, setUser] = useState<User | null>(null);
   const [darkMode, setDarkMode] = useState<boolean>(false);
-  const theme = darkMode ? MD3DarkTheme : MD3LightTheme;
+  const baseTheme = darkMode ? MD3DarkTheme : MD3LightTheme;
+  const [isLoading, setIsLoading] = useState(true);
 
+  const theme = {
+    ...baseTheme,
+    fonts: {
+      ...baseTheme.fonts,
+      bodyLarge: { fontFamily: 'Poppins_400Regular' },
+      bodyMedium: { fontFamily: 'Poppins_400Regular' },
+      titleLarge: { fontFamily: 'Poppins_400Regular' },
+      headlineMedium: { fontFamily: 'Poppins_400Regular' },
+      labelMedium: { fontFamily: 'Poppins_600SemiBold' },
+    },
+  };
+
+  let [fontsLoaded] = useFonts({
+    Poppins_400Regular,
+    Poppins_600SemiBold,
+  });
+
+  useEffect(() => {
+    const customTextProps = {
+      style: {
+        fontFamily: 'Poppins_400Regular',
+      },
+    };
+    setCustomText(customTextProps);
+  }, []);
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
@@ -61,6 +100,8 @@ export default function App() {
     });
     return unsubscribe;
   }, []);
+
+  if (!fontsLoaded) return null;
 
   const handleSignOut = async (navigation: any) => {
     try {
@@ -78,110 +119,142 @@ export default function App() {
 
   const Drawer = createDrawerNavigator();
 
-  // 🔹 Menú personalizado
-  function CustomDrawerContent({ navigation }: DrawerContentComponentProps) {
+/*   function CustomDrawerContent({ navigation }: DrawerContentComponentProps) {
     return (
-      <View style={styles.drawerContainer}>
-        {/* Botón de cerrar (X) */}
-{/*         <IconButton
-          icon="close"
-          size={30}
-          onPress={() => navigation.dispatch(DrawerActions.closeDrawer())}
-          style={styles.closeButton}
-        /> */}
+      <ScrollView contentContainerStyle={styles.drawerContainer}>
+        <Text style={styles.menuTitle}>Tu menú</Text>
   
-        {/* Título */}
-        <Text style={styles.menuTitle}>Menú</Text>
-  
-        {/* Opciones de navegación */}
-        {["Home", "Classes", "Progress", "Dashboard", "Preguntas"].map((screen) => (
+        <View style={styles.cardContainer}>
           <TouchableOpacity
-            key={screen}
+            style={styles.card}
             onPress={() => {
-              navigation.navigate(screen);
-              navigation.dispatch(DrawerActions.closeDrawer()); // Cierra el Drawer al navegar
+              navigation.navigate("Home");
+              navigation.dispatch(DrawerActions.closeDrawer());
             }}
-            style={styles.menuItem}
           >
-            <Text style={styles.menuText}>{screen}</Text>
+            <MaterialCommunityIcons name="home" size={24} color="#FF6600" />
+            <Text style={styles.cardText}>Inicio</Text>
           </TouchableOpacity>
-        ))}
   
-        {/* Botón de Cerrar Sesión */}
-        <IconButton
-          icon="logout"
-          size={24}
-          onPress={() => handleSignOut(navigation)}
+          <TouchableOpacity
+            style={styles.card}
+            onPress={() => {
+              navigation.navigate("Classes");
+              navigation.dispatch(DrawerActions.closeDrawer());
+            }}
+          >
+            <MaterialCommunityIcons name="dumbbell" size={24} color="#FF6600" />
+            <Text style={styles.cardText}>Clases</Text>
+          </TouchableOpacity>
+  
+          <TouchableOpacity
+            style={styles.card}
+            onPress={() => {
+              navigation.navigate("Progress");
+              navigation.dispatch(DrawerActions.closeDrawer());
+            }}
+          >
+            <MaterialCommunityIcons name="chart-line" size={24} color="#FF6600" />
+            <Text style={styles.cardText}>Progreso</Text>
+          </TouchableOpacity>
+  
+          <TouchableOpacity
+            style={styles.card}
+            onPress={() => {
+              navigation.navigate("Dashboard");
+              navigation.dispatch(DrawerActions.closeDrawer());
+            }}
+          >
+            <MaterialCommunityIcons name="view-dashboard" size={24} color="#FF6600" />
+            <Text style={styles.cardText}>Dashboard</Text>
+          </TouchableOpacity>
+  
+          <TouchableOpacity
+            style={styles.card}
+            onPress={() => {
+              navigation.navigate("Preguntas");
+              navigation.dispatch(DrawerActions.closeDrawer());
+            }}
+          >
+            <MaterialCommunityIcons name="comment-question" size={24} color="#FF6600" />
+            <Text style={styles.cardText}>Preguntas</Text>
+          </TouchableOpacity>
+  
+          <TouchableOpacity
+            style={styles.card}
+            onPress={() => {
+              navigation.navigate("Calendario");
+              navigation.dispatch(DrawerActions.closeDrawer());
+            }}
+          >
+            <MaterialCommunityIcons name="calendar-month" size={24} color="#FF6600" />
+            <Text style={styles.cardText}>Calendario</Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            style={styles.card}
+            onPress={() => {
+              navigation.navigate("CalendarScreen");
+              navigation.dispatch(DrawerActions.closeDrawer());
+            }}
+          >
+            <MaterialCommunityIcons name="calendar-month" size={24} color="#FF6600" />
+            <Text style={styles.cardText}>CalendarScreen</Text>
+          </TouchableOpacity>
+        </View>
+  
+        <TouchableOpacity
           style={styles.logoutButton}
-        />
-      </View>
-    );
-  }
-  
-  // 🔹 Botón de menú hamburguesa (solo abre el Drawer)
-  function CustomDrawerToggle({ navigation }: { navigation: any }) {
-    return (
-      <IconButton
-        icon="menu"
-        size={30}
-        onPress={() => navigation.dispatch(DrawerActions.openDrawer())}
-        style={{ marginLeft: 10 }}
-      />
-    );
-  }
-
-  function PreguntasScreen() {
-    return (
-      <View>
-        <Goals />
-{/*         <Gender />
-        <Location />
-        <ExerciseHistory />
-        <TrainingIntensity />
-        <UserInfo />
-        <HealthGoals /> */}
-
-      </View>
-    );
-  }
-  
-  // 🔹 Configuración del Drawer
-  function DrawerNavigator() {
-    return (
-      <View style={{ flex: 1 }}>
-        {/* 🔹 Overlay que bloquea el toque afuera */}
-        <TouchableOpacity activeOpacity={1} style={styles.overlay} />
-  
-        <Drawer.Navigator
-          drawerContent={(props) => <CustomDrawerContent {...props} />}
-          screenOptions={({ navigation }) => ({
-            headerLeft: () => <CustomDrawerToggle navigation={navigation} />,
-            drawerStyle: { width: 250 },
-            swipeEnabled: false, // ❌ No se puede cerrar deslizando
-            gestureEnabled: false, // ❌ No se cierra tocando afuera
-        /*     overlayColor: "transparent", // ❌ Deshabilita la capa de cierre táctil */
-          })}
+          onPress={() => handleSignOut(navigation)}
         >
-          <Drawer.Screen name="Home" component={HomeScreen} />
-          <Drawer.Screen name="Classes" component={ClassesScreen} />
-          <Drawer.Screen name="Progress" component={ProgressScreen} />
-          <Drawer.Screen name="Dashboard" component={DashboardScreen} />
-          <Drawer.Screen name="Preguntas" component={PreguntasScreen} options={{ headerShown: false }}/>
-        </Drawer.Navigator>
-      </View>
+          <MaterialCommunityIcons name="logout" size={24} color="#FF3B30" />
+          <Text style={styles.logoutText}>Cerrar sesión</Text>
+        </TouchableOpacity>
+      </ScrollView>
     );
   }
-  
 
-  return (
+
+    // 🔹 Configuración del Drawer
+    function DrawerNavigator() {
+      return (
+        <View style={{ flex: 1 }}>
+          <TouchableOpacity activeOpacity={1} style={styles.overlay} />
+    
+          <Drawer.Navigator
+            drawerContent={(props) => <CustomDrawerContent {...props} />}
+            screenOptions={({ navigation }) => ({
+              headerLeft: () => <CustomDrawerToggle navigation={navigation} />,
+              drawerStyle: { width: 250 },
+              swipeEnabled: false, // ❌ No se puede cerrar deslizando
+              gestureEnabled: false, // ❌ No se cierra tocando afuera
+          /*     overlayColor: "transparent", // ❌ Deshabilita la capa de cierre táctil 
+              headerTitleStyle: {fontFamily: 'Poppins_600SemiBold', fontSize: 20,},
+            })}
+          >
+            <Drawer.Screen name="Home" component={HomeScreen} />
+            <Drawer.Screen name="Classes" component={ClassesScreen} />
+            <Drawer.Screen name="Progress" component={ProgressScreen} />
+            <Drawer.Screen name="Dashboard" component={DashboardScreen} />
+            <Drawer.Screen name="Preguntas" component={Goals} options={{ headerShown: false }}/>
+            <Drawer.Screen name="Calendario" component={WeeklySchedule} />
+            <Drawer.Screen name="CalendarScreen" component={CalendarScreen} />
+          </Drawer.Navigator>
+        </View>
+      );
+    } */
+
+  return isLoading ? (
+    <SplashScreen onFinish={() => setIsLoading(false)} />
+  ) : (    
     <GestureHandlerRootView style={{ flex: 1 }}>
       <PaperProvider theme={theme}>
         <Provider store={store}>
           <AuthProvider> 
             <NavigationContainer>
-              <Stack.Navigator initialRouteName="Welcome">
+              <Stack.Navigator initialRouteName="Welcome"  screenOptions={{headerTitleStyle: {fontFamily: 'Poppins_600SemiBold', fontSize: 20,},}}>
                 {/* Pantallas de bienvenida */}
-                <Stack.Screen name="Welcome" component={Welcome} />
+                <Stack.Screen name="Welcome" component={Welcome} options={{ headerShown: false }}/>
                 <Stack.Screen name="Goals" component={Goals} />
                 <Stack.Screen name="Gender" component={Gender} />
                 <Stack.Screen name="Location" component={Location} />
@@ -192,9 +265,9 @@ export default function App() {
                 <Stack.Screen name="GoogleFitSetup" component={GoogleFitSetup} />
                 <Stack.Screen name="GoogleFitAuth" component={GoogleFitAuth} />
                 <Stack.Screen name="Registration" component={Registration} />
-                <Stack.Screen name="WeeklySchedule" component={WeeklySchedule} />
+                <Stack.Screen name="WeeklySchedule" component={WeeklySchedule} options={{ headerShown: false }} />
                 <Stack.Screen name="SchedulePreference" component={SchedulePreference} />
-                <Stack.Screen name="TimePicker" component={TimePicker} />
+                <Stack.Screen name="TimePicker" component={TimePicker} options={{ headerShown: false }} />
                 <Stack.Screen name="TrainingReminder" component={TrainingReminder} />
                 <Stack.Screen name="CalibrationInfo" component={CalibrationInfo} />
                 <Stack.Screen name="FitnessAssessment" component={FitnessAssessment} />
@@ -204,13 +277,20 @@ export default function App() {
                 <Stack.Screen name="Login" component={LoginScreen} options={{ headerShown: false }} />
   
                 {/* Drawer Navigation */}
-                <Stack.Screen name="Home" component={DrawerNavigator} options={{ headerShown: false }} />
-  
+{/*                 <Stack.Screen name="Home" component={DrawerNavigator} options={{ headerShown: false }} />
+ */}  
+                <Stack.Screen name="Main" component={BottomTabNavigator} options={{ headerShown: false }} />
+                <Stack.Screen name="Graficas" component={GraficasNavigator} options={{ headerShown: false }} />
                 {/* Pantallas adicionales */}
+                <Stack.Screen name="Home" component={HomeScreen} />
                 <Stack.Screen name="MembershipScreen" component={MembershipScreen} />
                 <Stack.Screen name="IMCScreen" component={IMCScreen} />
                 <Stack.Screen name="ChartsScreen" component={ChartsScreen} />
                 <Stack.Screen name="BodyScreen" component={BodyScreen} />
+                <Stack.Screen name="Predict" component={Predict} />
+                <Stack.Screen name="Reporte" component={Reporte} />
+                <Stack.Screen name="ClassesScreen" component={ClassesScreen} />
+                <Stack.Screen name="ProgressScreen" component={ProgressScreen} />
               </Stack.Navigator>
             </NavigationContainer>
           </AuthProvider>
@@ -221,11 +301,51 @@ export default function App() {
 }
 
 const styles = StyleSheet.create({
-  drawerContainer: { flex: 1, paddingTop: 40, paddingHorizontal: 20 },
+  drawerContainer: {
+    padding: 20,
+    backgroundColor: "#F9F9F9",
+  },
+  menuTitle: {
+    fontSize: 24,
+    fontWeight: "600",
+    marginBottom: 20,
+    fontFamily: "Poppins_600SemiBold",
+    color: "#333",
+  },
+  cardContainer: {
+    gap: 12,
+  },
+  card: {
+    flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: "#fff",
+    padding: 14,
+    borderRadius: 12,
+    elevation: 2,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.1,
+    shadowRadius: 2,
+  },
+  cardText: {
+    marginLeft: 12,
+    fontSize: 16,
+    fontFamily: "Poppins_600SemiBold",
+    color: "#333",
+  },
+  logoutButton: {
+    marginTop: 30,
+    flexDirection: "row",
+    alignItems: "center",
+  },
+  logoutText: {
+    marginLeft: 10,
+    fontSize: 16,
+    fontFamily: "Poppins_600SemiBold",
+    color: "#FF3B30",
+  },
   closeButton: { alignSelf: "flex-end" },
-  menuTitle: { fontSize: 20, fontWeight: "bold", textAlign: "center", marginBottom: 20 },
   menuItem: { paddingVertical: 10, borderBottomWidth: 1, borderBottomColor: "#ccc" },
-  menuText: { fontSize: 18 },
-  logoutButton: { alignSelf: "center", marginTop: 30 },
+  menuText: { fontSize: 18,  fontFamily: 'Poppins_400Regular' },
   overlay: { position: "absolute", width: "100%", height: "100%" }, // 🔹 Bloquea el cierre táctil
 });

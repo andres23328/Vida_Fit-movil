@@ -53,11 +53,11 @@ const styles = StyleSheet.create({
   },
   logoContainer: {
     alignItems: 'center',
-    marginTop: 40,
+    marginTop: 80,
   },
   logo: {
-    width: 140,
-    height: 140,
+    width: 240,
+    height: 240,
     resizeMode: 'contain',
   },
   content: {
@@ -65,10 +65,11 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: 28,
-    fontWeight: '700',
+    fontWeight: '600',
     textAlign: 'center',
     color: '#111827', // Gris oscuro
     marginBottom: 10,
+    fontFamily: 'Poppins_600SemiBold',
   },
   subtitle: {
     fontSize: 18,
@@ -76,9 +77,10 @@ const styles = StyleSheet.create({
     lineHeight: 26,
     color: '#4B5563', // Gris intermedio
     marginBottom: 30,
+    fontFamily: 'Poppins_400Regular'
   },
   button: {
-    backgroundColor: '#F97316', // Naranja brillante
+    backgroundColor: '#2ECC71', // Naranja brillante
     paddingVertical: 14,
     paddingHorizontal: 50,
     borderRadius: 50,
@@ -93,6 +95,7 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: '600',
     textAlign: 'center',
+    fontFamily: 'Poppins_400Regular'
   },
   footer: {
     alignItems: 'center',
@@ -102,10 +105,12 @@ const styles = StyleSheet.create({
     fontSize: 14,
     textAlign: 'center',
     color: '#6B7280', // Gris
+    fontFamily: 'Poppins_400Regular'
   },
   linkText: {
     color: '#2563EB', // Azul
     fontWeight: '600',
+    fontFamily: 'Poppins_400Regular'
   },
 });
 

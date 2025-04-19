@@ -23,8 +23,11 @@ import { NavigatorScreenParams } from '@react-navigation/native';
 }; */
 
 export type RootStackParamList = {
+  Main: undefined;
+  Graficas: { initialTab: string } | undefined;
   Login: undefined; // Pantalla de inicio de sesión
   Home: undefined; // Pantalla principal
+  Predict: undefined;
   Welcome: undefined; // Pantalla inicial
   Goals: undefined; 
   Gender: undefined; // Ejemplo: pasa metas desde Goals
@@ -43,4 +46,14 @@ export type RootStackParamList = {
   CalibrationInfo: undefined;
   FitnessAssessment: undefined;
   PersonalizedWelcome: undefined;
+  MembershipScreen: undefined;
+  IMCScreen: undefined;
+  ChartsScreen: undefined;
+  BodyScreen: undefined;
+  Reporte: undefined;
+  ClassesScreen: undefined;
+  ProgressScreen: undefined;
+  CalendarScreen: undefined;
+  AppTabs: undefined; 
+  Dashboard: undefined;
 };

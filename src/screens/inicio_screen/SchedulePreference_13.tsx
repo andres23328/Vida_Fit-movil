@@ -57,6 +57,7 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     textAlign: 'center',
     marginBottom: 24,
+    fontFamily: 'Poppins_600SemiBold',
   },
   optionsContainer: {
     flexDirection: 'row',
@@ -82,6 +83,8 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     color: '#4B5563', // Gris oscuro
     fontWeight: '500',
+    fontFamily: 'Poppins_400Regular',
+
   },
   nextButton: {
     backgroundColor: '#F97316', // Naranja

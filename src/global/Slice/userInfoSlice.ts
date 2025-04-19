@@ -30,8 +30,13 @@ const userInfoSlice = createSlice({
     setUnits: (state, action: PayloadAction<'metric' | 'imperial'>) => {
       state.units = action.payload;
     },
+    resetForm: (state) => {
+      state.height = '';
+      state.age = '';
+      state.weight = '';
+    },
   },
 });
 
-export const { setHeight, setWeight, setAge, setUnits } = userInfoSlice.actions;
+export const { setHeight, setWeight, setAge, setUnits, resetForm } = userInfoSlice.actions;
 export default userInfoSlice.reducer;

@@ -1,15 +1,16 @@
-import React from 'react';
-import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
+import React, { useMemo, useContext, useState } from 'react';
+import { View, Text, TouchableOpacity, Alert, StyleSheet, ActivityIndicator } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
-import Icon from 'react-native-vector-icons/FontAwesome';
-
-import { RootStackParamList } from '../../components/types';
 import { useDispatch, useSelector } from 'react-redux';
-import { updateResponse } from '../../global/redux/responsesSlice';
+import { updateResponse, resetSelectedGoals } from '../../global/redux/responsesSlice';
 import { RootState } from '../../global/store';
+import { RootStackParamList } from '../../components/types';
+import { AuthContext } from '../../context/AuthContext';
+import { saveUserResponses } from '../../global/services/firestoreService';
+import { resetForm } from '../../global/Slice/userInfoSlice';
 
 // Define el tipo de navegación
 type NavigationProp = NativeStackNavigationProp<RootStackParamList, 'HealthGoals'>;
@@ -17,26 +18,67 @@ type NavigationProp = NativeStackNavigationProp<RootStackParamList, 'HealthGoals
 const HealthGoals: React.FC = () => {
   const navigation = useNavigation<NavigationProp>();
   const dispatch = useDispatch();
+  // Memoiza el estado para evitar renders innecesarios
+  const selectedGoals = useSelector((state: RootState) => state.responses.selectedGoals);
+  const memoizedGoals = useMemo(() => selectedGoals || [], [selectedGoals]);
+  const authContext = useContext(AuthContext);
+  const [loading, setLoading] = useState(false);
+  const userResponses = useSelector((state: RootState) => state.responses);
+  const userInfo = useSelector((state: RootState) => state.userInfo);
 
-  // Obtiene las metas seleccionadas desde Redux y las convierte en un array si es necesario
-  const selectedGoals: string[] = useSelector((state: RootState) =>
-    Array.isArray(state.responses.selectedGoals) ? state.responses.selectedGoals : []
-  );
+
+  if (!authContext) {
+    throw new Error('AuthContext debe usarse dentro de un AuthProvider');
+  }
+
+  const { user } = authContext;
 
   // Alterna la selección de una meta y la guarda en responseSlice
   const handleToggleGoal = (goal: string) => {
-    const updatedGoals = selectedGoals.includes(goal)
-      ? selectedGoals.filter((g) => g !== goal) // Remueve si ya está seleccionado
-      : [...selectedGoals, goal]; // Agrega si no está seleccionado
+    const updatedGoals = memoizedGoals.includes(goal)
+      ? memoizedGoals.filter((g) => g !== goal) // Remueve si ya está seleccionado
+      : [...memoizedGoals, goal]; // Agrega si no está seleccionado
 
     dispatch(updateResponse({ field: 'selectedGoals', value: updatedGoals }));
   };
 
   // Navega a la siguiente pantalla solo si hay metas seleccionadas
   const handleNavigation = () => {
-    console.log('Objetivos seleccionados:', selectedGoals);
-    if (selectedGoals.length > 0) {
+    console.log('Objetivos seleccionados:', memoizedGoals);
+    if (memoizedGoals.length > 0) {
       navigation.navigate('Registration');
+    }
+  };
+
+
+  // Guarda las respuestas si la sesión está activa y navega a Home
+  const handleSaveResponses = async () => {
+    
+    if (!user) {
+      Alert.alert('Error', 'Debes iniciar sesión para guardar respuestas.');
+      return;
+    }
+
+    if (loading) return;
+  
+    setLoading(true);
+
+    try {
+      const userId = user.uid;
+      const email = user.email || 'Sin correo';
+
+
+      await saveUserResponses(userId, email, userResponses, userInfo);
+
+      Alert.alert('¡Éxito!', 'Respuestas guardadas.');
+      dispatch(resetForm());
+      dispatch(resetSelectedGoals());
+      navigation.replace("Home");// Redirige a la pantalla Home
+    } catch (error) {
+      console.error('❌ Error al guardar respuestas:', error);
+      Alert.alert('Error', 'No se pudo guardar las respuestas.');
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -49,7 +91,7 @@ const HealthGoals: React.FC = () => {
         <Text style={styles.sectionTitle}>Rendimiento</Text>
 
         <TouchableOpacity
-          style={[styles.option, selectedGoals.includes('strength') && styles.selectedOption]}
+          style={[styles.option, memoizedGoals.includes('strength') && styles.selectedOption]}
           onPress={() => handleToggleGoal('strength')}
         >
           <MaterialIcons name="fitness-center" size={24} style={styles.icon} />
@@ -57,7 +99,7 @@ const HealthGoals: React.FC = () => {
         </TouchableOpacity>
 
         <TouchableOpacity
-          style={[styles.option, selectedGoals.includes('combinedTraining') && styles.selectedOption]}
+          style={[styles.option, memoizedGoals.includes('combinedTraining') && styles.selectedOption]}
           onPress={() => handleToggleGoal('combinedTraining')}
         >
           <FontAwesome name="heartbeat" size={24} style={styles.icon} />
@@ -70,7 +112,7 @@ const HealthGoals: React.FC = () => {
         <Text style={styles.sectionTitle}>Salud</Text>
 
         <TouchableOpacity
-          style={[styles.option, selectedGoals.includes('totalHealth') && styles.selectedOption]}
+          style={[styles.option, memoizedGoals.includes('totalHealth') && styles.selectedOption]}
           onPress={() => handleToggleGoal('totalHealth')}
         >
           <FontAwesome name="heart" size={24} style={styles.icon} />
@@ -78,7 +120,7 @@ const HealthGoals: React.FC = () => {
         </TouchableOpacity>
 
         <TouchableOpacity
-          style={[styles.option, selectedGoals.includes('cognitiveHealth') && styles.selectedOption]}
+          style={[styles.option, memoizedGoals.includes('cognitiveHealth') && styles.selectedOption]}
           onPress={() => handleToggleGoal('cognitiveHealth')}
         >
           <MaterialIcons name="psychology" size={24} style={styles.icon} />
@@ -86,22 +128,32 @@ const HealthGoals: React.FC = () => {
         </TouchableOpacity>
 
         <TouchableOpacity
-          style={[styles.option, selectedGoals.includes('sexualHealth') && styles.selectedOption]}
+          style={[styles.option, memoizedGoals.includes('sexualHealth') && styles.selectedOption]}
           onPress={() => handleToggleGoal('sexualHealth')}
         >
-          <Icon name="venus" size={24} style={styles.icon} />
+          <FontAwesome name="venus" size={24} style={styles.icon} />
           <Text style={styles.optionText}>Salud Sexual</Text>
         </TouchableOpacity>
       </View>
 
-      {/* Botón de Siguiente */}
-      <TouchableOpacity
-        style={[styles.nextButton, selectedGoals.length === 0 && styles.disabledButton]}
-        onPress={handleNavigation}
-        disabled={selectedGoals.length === 0}
-      >
-        <Text style={styles.nextButtonText}>Siguiente</Text>
-      </TouchableOpacity>
+      {/* Botones condicionales */}
+      {user ? (
+        <TouchableOpacity
+          style={[styles.nextButton, memoizedGoals.length === 0 && styles.disabledButton]}
+          onPress={handleSaveResponses}
+          disabled={memoizedGoals.length === 0 || loading}
+        >
+          {loading ? <ActivityIndicator color="#FFF" /> : <Text style={styles.nextButtonText}>Guardar y Continuar</Text>}
+        </TouchableOpacity>
+      ) : (
+        <TouchableOpacity
+          style={[styles.nextButton, memoizedGoals.length === 0 && styles.disabledButton]}
+          onPress={handleNavigation}
+          disabled={memoizedGoals.length === 0}
+        >
+          <Text style={styles.nextButtonText}>Siguiente</Text>
+        </TouchableOpacity>
+      )}
     </View>
   );
 };
@@ -119,6 +171,7 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     marginBottom: 24,
     color: '#1F2937',
+    fontFamily: 'Poppins_600SemiBold',
   },
   section: {
     marginBottom: 32,
@@ -128,6 +181,7 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     marginBottom: 12,
     color: '#6B7280',
+    fontFamily: 'Poppins_400Regular',
   },
   option: {
     flexDirection: 'row',
@@ -148,6 +202,7 @@ const styles = StyleSheet.create({
   optionText: {
     fontSize: 16,
     color: '#1F2937',
+    fontFamily: 'Poppins_400Regular',
   },
   nextButton: {
     backgroundColor: '#F97316',
@@ -163,6 +218,7 @@ const styles = StyleSheet.create({
     color: '#FFF',
     fontSize: 16,
     fontWeight: '600',
+    fontFamily: 'Poppins_400Regular',
   },
 });
 

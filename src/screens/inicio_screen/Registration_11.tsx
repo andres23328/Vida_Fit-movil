@@ -3,11 +3,12 @@ import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert, ActivityInd
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useDispatch, useSelector } from 'react-redux';
-import { updateField } from '../../global/Slice/registrationSlice';
-import { RootState } from '../../global/store';
+import { updateField, resetForm as resetRegistrationForm } from '../../global/Slice/registrationSlice';
+import { RootState  } from '../../global/store';
 import { registerUser } from '../../global/services/authService';
 import { saveUserResponses } from '../../global/services/firestoreService';
 import { RootStackParamList } from '../../components/types';
+import { resetForm as resetUserInfoForm  } from '../../global/Slice/userInfoSlice';
 
 type NavigationProp = NativeStackNavigationProp<RootStackParamList, 'Registration'>;
 
@@ -65,7 +66,10 @@ const Registration: React.FC = () => {
 
   
       Alert.alert('¡Éxito!', 'Cuenta creada y respuestas guardadas.');
-      navigation.navigate('WeeklySchedule');
+      dispatch(resetUserInfoForm());  
+      dispatch(resetRegistrationForm());
+      navigation.navigate('Login');
+      
    } catch (error: any) {
     // Manejo específico del error de email en uso
     if (error.code === 'auth/email-already-in-use') {
@@ -133,6 +137,7 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     textAlign: 'center',
     marginBottom: 24,
+    fontFamily: 'Poppins_600SemiBold',
   },
   formContainer: {
     marginBottom: 24,
@@ -145,6 +150,7 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     marginBottom: 12,
     fontSize: 16,
+    fontFamily: 'Poppins_400Regular',
   },
   submitButton: {
     backgroundColor: '#F97316',
@@ -152,6 +158,7 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     alignItems: 'center',
     marginHorizontal: 16,
+    
   },
   disabledButton: {
     backgroundColor: '#D1D5DB',
@@ -160,12 +167,14 @@ const styles = StyleSheet.create({
     color: '#FFF',
     fontSize: 18,
     fontWeight: '600',
+    fontFamily: 'Poppins_400Regular',
   },
   termsText: {
     fontSize: 12,
     color: '#6B7280',
     textAlign: 'center',
     marginTop: 16,
+    fontFamily: 'Poppins_400Regular',
   },
 });
 

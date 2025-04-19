@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert  } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { RootStackParamList } from '../../components/types';
@@ -25,6 +25,15 @@ const UserInfo: React.FC = () => {
     }
   };
 
+  const isValidInput =
+    height && weight && age &&
+    parseFloat(height) >= (units === 'metric' ? 50 : 1.5) &&
+    parseFloat(height) <= (units === 'metric' ? 250 : 8.2) &&
+    parseFloat(weight) >= (units === 'metric' ? 20 : 44) &&
+    parseFloat(weight) <= (units === 'metric' ? 300 : 660) &&
+    parseInt(age, 10) >= 5 &&
+    parseInt(age, 10) <= 100;
+
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Cuéntanos un poco sobre ti</Text>
@@ -48,13 +57,15 @@ const UserInfo: React.FC = () => {
         {/* Edad */}
         <View style={styles.inputContainer}>
           <Text style={styles.label}>Edad</Text>
-          <TextInput
-            value={age}
-            onChangeText={(value) => dispatch(setAge(value))} // Actualiza el estado global
-            style={[styles.input, { flex: 1 }]}
-            keyboardType="numeric"
-            placeholder="Ej. 22"
-          />
+          <View style={styles.inputWrapper}>
+            <TextInput
+              value={age}
+              onChangeText={(value) => dispatch(setAge(value))} // Actualiza el estado global
+              style={[styles.input]}
+              keyboardType="numeric"
+              placeholder="Ej. 22"
+            />
+          </View>
         </View>
 
         {/* Peso */}
@@ -95,11 +106,19 @@ const UserInfo: React.FC = () => {
 
       {/* Botón para continuar */}
       <TouchableOpacity
-        style={styles.nextButton}
-        onPress={() => navigation.navigate('HealthGoals')} // Navegar sin parámetros
+        style={[styles.nextButton, isValidInput ? {} : styles.disabledButton]}
+        onPress={() => {
+          if (isValidInput) {
+            navigation.navigate('HealthGoals');
+          } else {
+            Alert.alert('Error', 'Por favor, ingresa valores válidos antes de continuar.');
+          }
+        }}
+        disabled={!isValidInput}
       >
         <Text style={styles.nextButtonText}>Siguiente</Text>
       </TouchableOpacity>
+      
     </View>
   );
 };
@@ -118,6 +137,7 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     marginBottom: 32,
     color: '#1F2937', // Gris oscuro
+    fontFamily: 'Poppins_600SemiBold',
   },
   formContainer: {
     marginBottom: 32,
@@ -132,6 +152,7 @@ const styles = StyleSheet.create({
     color: '#4B5563', // Gris más oscuro
     marginRight: 10, // Espacio entre label y input
     width: 60, // Ancho fijo para el label
+    fontFamily: 'Poppins_400Regular',
   },
   inputWrapper: {
     flexDirection: 'row', // Input + unidad en fila
@@ -153,6 +174,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: '#6B7280', // Gris más claro
     marginLeft: 8, // Separación entre el input y la unidad
+    fontFamily: 'Poppins_400Regular',
   },
   unitButtonsContainer: {
     flexDirection: 'row',
@@ -176,6 +198,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: '600',
     color: '#4B5563',
+    fontFamily: 'Poppins_400Regular',
   },
   activeUnitButtonText: {
     color: '#FFF', // Texto blanco cuando está activo
@@ -186,12 +209,17 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     marginHorizontal: 16,
     marginTop: 32,
+    
+  },
+  disabledButton: {
+    backgroundColor: '#A9A9A9', // Un color más tenue para indicar deshabilitado
   },
   nextButtonText: {
     textAlign: 'center',
     color: '#FFF',
     fontSize: 16,
     fontWeight: '600',
+    fontFamily: 'Poppins_400Regular',
   },
 });
 
