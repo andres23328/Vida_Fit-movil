@@ -53,18 +53,21 @@ const DashboardScreen: React.FC = () => {
       },
     })
   ).current;
-  
 
   const cards = [
     { name: "IMC", description: "Consulta tu Índice de Masa Corporal.", navigateTo: "IMCScreen" },
     { name: "Gráficas", description: "Visualiza tu progreso en gráficas.", navigateTo: "Graficas" },
     { name: "Cuerpo Humano", description: "Modifica y analiza tu masa corporal.", navigateTo: "BodyScreen" },
     { name: "Reporte", description: "📊 Reporte de Peso Mensual.", navigateTo: "Reporte" },
+    { name: "Preguntas", description: "Formulario para predecir ejercicios con IA.", navigateTo: "Goals" }, // Ajustado aquí
   ];
 
   return (
     <View style={styles.flexContainer}>
-      <ScrollView style={[styles.container, darkMode ? styles.darkBackground : styles.lightBackground]}>
+      <ScrollView
+        style={[styles.container, darkMode ? styles.darkBackground : styles.lightBackground]}
+        contentContainerStyle={{ paddingBottom: 150 }}
+      >
         <Text variant="headlineMedium" style={[styles.title, darkMode ? styles.darkText : styles.lightText]}>
           Panel de Control
         </Text>
@@ -83,10 +86,10 @@ const DashboardScreen: React.FC = () => {
         </View>
       </ScrollView>
 
-      {/* Botón flotante del Chatbot con movimiento */}
+      {/* Botón flotante del Chatbot con movimiento y acción */}
       <Animated.View style={[styles.chatButton, chatPosition.getLayout()]} {...panResponder.panHandlers}>
         <TouchableOpacity onPress={() => setIsChatOpen(true)}>
-          <MessageCircle size={32} color="white" />
+          <MessageCircle size={28} color="white" />
         </TouchableOpacity>
       </Animated.View>
 
@@ -96,10 +99,9 @@ const DashboardScreen: React.FC = () => {
   );
 };
 
-// Estilos
 const styles = StyleSheet.create({
   flexContainer: { flex: 1, position: 'relative' },
-  container: { flex: 1, padding: 10, paddingBottom: 100 },
+  container: { flex: 1, padding: 10 },
   title: { textAlign: 'center', marginVertical: 30, fontSize: 24, fontFamily: 'Poppins_600SemiBold' },
   cardContainer: { flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'space-evenly' },
   cardWrapper: { width: '48%', marginBottom: 20 },
@@ -113,12 +115,12 @@ const styles = StyleSheet.create({
   chatButton: {
     position: 'absolute',
     backgroundColor: '#3B82F6',
-    width: 60,
-    height: 60,
-    borderRadius: 30,
+    width: 55,
+    height: 55,
+    borderRadius: 27.5,
     justifyContent: 'center',
     alignItems: 'center',
-    elevation: 5,
+    elevation: 6,
     zIndex: 999,
   },
   cardDescCommon: {
