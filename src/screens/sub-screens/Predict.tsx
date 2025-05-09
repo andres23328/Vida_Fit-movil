@@ -1,7 +1,7 @@
 
 // src/screens/Predict.tsx
 import React, { useState, useEffect, useCallback, useContext, useRef,  } from 'react'
-import { View, StyleSheet, Alert, TouchableOpacity, Animated, ScrollView, Easing,  ActivityIndicator    } from 'react-native';
+import { View, StyleSheet, Alert, TouchableOpacity, Animated, ScrollView, Easing,  ActivityIndicator, PanResponder   } from 'react-native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { RootStackParamList } from '../../components/types'; 
 import { TextInput } from 'react-native-paper';
@@ -13,7 +13,8 @@ import { doc, getDocs, collection, query, orderBy, limit } from 'firebase/firest
 import StatBox from '../../components/StatBox';
 import Predicts from '../../components/Predicts';
 import { AuthContext } from '../../context/AuthContext';
-
+import { MessageCircle } from 'lucide-react-native';
+import Gemini from './Gemini';
 
 interface Exercise {
   BodyPart: string;
@@ -38,8 +39,7 @@ const Predict: React.FC = () => {
   const [predictionError, setPredictionError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [loading_predict, setLoading_predict] = useState(false);
-  const [loading_gemini, setLoading_gemini] = useState(false);
-
+  const [isChatOpen, setIsChatOpen] = useState<boolean>(false);
   // ✅ Siempre usar el hook antes de cualquier return condicional
   const authContext = useContext(AuthContext);
 
@@ -59,6 +59,24 @@ const Predict: React.FC = () => {
   }
 
 
+  const chatPosition = useRef(new Animated.ValueXY({ x: 300, y: 600 })).current;
+
+  // PanResponder para mover el botón
+  const panResponder = useRef(
+    PanResponder.create({
+      onMoveShouldSetPanResponder: () => true,
+      onPanResponderGrant: () => {
+        chatPosition.extractOffset();
+      },
+      onPanResponderMove: Animated.event(
+        [null, { dx: chatPosition.x, dy: chatPosition.y }],
+        { useNativeDriver: false }
+      ),
+      onPanResponderRelease: () => {
+        chatPosition.flattenOffset();
+      },
+    })
+  ).current;
 
   // Valores animados para cada círculo
   const translateY1 = useRef(new Animated.Value(0)).current;
@@ -121,10 +139,10 @@ const Predict: React.FC = () => {
     setPredictionError(null); // Limpia errores previos
     //CUN: 192.168.10.17:5000
     //casa: 192.168.20.31:5000
-    //datos:  192.168.59.76:5000
+    //datos:  192.168.239.76:5000 192.168.4.76:5000
     
     try {
-      const response = await axios.get<PredictionResponse>("http://192.168.20.31:5000/api/predict");
+      const response = await axios.get<PredictionResponse>("http://192.168.84.76:5000/api/predict");
       console.log("Respuesta de /predict:", response.data);
       setPredictionData(response.data);
     } catch (err: any) {
@@ -148,22 +166,6 @@ const Predict: React.FC = () => {
   const [foodError, setFoodError] = useState<string | null>(null);
 
 
-  const fetchFoodAndDrinks = useCallback(async () => {
-    setLoading_gemini(true);
-    try {
-      const response = await axios.post("http://192.168.20.31:5000/api/comida-bebidas", {
-        preferencias: preferencias, 
-        restricciones: restricciones 
-      });
-      console.log("Respuesta de /comida-bebidas:", response.data);
-      setFoodData(response.data);
-    } catch (err: any) {
-      setFoodError(err.response ? err.response.data.message : 'Error al obtener comida y bebidas');
-    } finally {
-      setLoading_gemini(false);
-    }
-  }, [preferencias, restricciones]); 
-  
   
   useEffect(() => {
     fetchPrediction(); // Llamada inicial al cargar el componente
@@ -423,49 +425,15 @@ const Predict: React.FC = () => {
           <Text style={{ fontSize: 20, fontWeight: '600', fontFamily: 'Poppins_600SemiBold' }}>{predictionError || "Cargando predicción de la AI..."}</Text>
         )}
 
-        <TextInput
-          style={styles.input}
-          label="Ingrese sus preferencias"
-          value={preferencias}
-          onChangeText={setPreferencias}
-          mode="outlined"
-        />
-              
-        <TextInput
-          style={styles.input}
-          label="Ingrese sus prioridades"
-          value={restricciones}
-          onChangeText={setRestricciones}
-          mode="outlined"
-        />
-              
 
-        {foodError ? (
-          <Text style={{ color: 'red' }}>{foodError}</Text>
-        ) : foodData ? (
-          <Predicts 
-            title="Recomendación de comida:"  
-            content={foodData.recomendacion || "No disponible"}  
-            tooltip="Alimentos recomendados para tu entrenamiento" 
-          />
-        ) : (
-          loading_gemini && !foodData && (
-            <Text style={{ marginTop: 10, fontFamily: 'Poppins_400Regular' }}>Cargando recomendación de comida...</Text>
-          )
-        )}
-        <TouchableOpacity 
-          style={[styles.button, { marginBottom: 50, opacity: loading_gemini ? 0.6 : 1 }]} 
-          onPress={fetchFoodAndDrinks} 
-          disabled={loading_gemini}
-        >
-          {loading_gemini ? (
-            <ActivityIndicator color="#FFF" />
-          ) : (
-            <Text style={styles.buttonText}>Obtener recomendación</Text>
-          )}
+
+      <Animated.View style={[styles.chatButton, chatPosition.getLayout()]} {...panResponder.panHandlers}>
+        <TouchableOpacity onPress={() => setIsChatOpen(true)}>
+          <MessageCircle size={28} color="white" />
         </TouchableOpacity>
+      </Animated.View>
 
-
+      {isChatOpen && <Gemini isChatOpen={isChatOpen} setIsChatOpen={setIsChatOpen} />}
 
       </View>
     </ScrollView>
@@ -537,6 +505,19 @@ const styles = StyleSheet.create({
     color: "white",
     fontWeight: "600",
     fontFamily: 'Poppins_600SemiBold',
+  },
+  chatButton: {
+    position: 'absolute',
+    backgroundColor: '#3B82F6',
+    width: 55,
+    height: 55,
+    borderRadius: 27.5,
+    justifyContent: 'center',
+    alignItems: 'center',
+    elevation: 6,
+    zIndex: 999,
+    bottom: 20,
+    right: 20,
   },
 });
 

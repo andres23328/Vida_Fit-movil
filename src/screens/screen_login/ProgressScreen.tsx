@@ -19,6 +19,7 @@ export default function ProgressScreen() {
   
   const [clasesReservadas, setClasesReservadas] = useState<any[]>([]);
   const [bodyPartsFirestore, setBodyPartsFirestore] = useState<Record<string, number>>({});
+  const [alertShown, setAlertShown] = useState(false); // NUEVO ESTADO
 
   const totalClases = 20;
   const clasesCompletadas = clasesReservadas.length;
@@ -59,7 +60,8 @@ export default function ProgressScreen() {
           setBodyPartsFirestore({}); // vaciar si no existe
         }
   
-        if (!clasesExists && !bodyExists) {
+/*         if (!alertShown && !clasesExists && !bodyExists) {
+          setAlertShown(true);
           Alert.alert(
             'Datos incompletos',
             'Para ingresar a tu progreso, primero debes registrar tus clases y tu información corporal.',
@@ -70,19 +72,24 @@ export default function ProgressScreen() {
             { cancelable: false }
           );
         } else if (!clasesExists) {
-          navigation.navigate('ClassesScreen');
+          //navigation.navigate('ClassesScreen');
         } else if (!bodyExists) {
-          navigation.navigate('BodyScreen');
-        }
+          //navigation.navigate('BodyScreen');
+        } */
       };
   
       checkProgressData();
-    }, [user, navigation])
+    }, [user, navigation, alertShown])
   );
   
   const handleClases = async () => {
     setLoading(true);
     navigation.navigate('ClassesScreen');
+    setLoading(false);
+  };
+  const handleCompo = async () => {
+    setLoading(true);
+    navigation.navigate('BodyScreen');
     setLoading(false);
   };
 
@@ -116,7 +123,7 @@ export default function ProgressScreen() {
               </View>
             ))
           ) : (
-            <Text style={styles.text}>No hay clases registradas.</Text>
+            <Text style={styles.textred}>No hay clases registradas.</Text>
           )}
         </Card.Content>
       </Card>
@@ -142,7 +149,7 @@ export default function ProgressScreen() {
               </Text>
             ))
           ) : (
-            <Text style={styles.text}>No hay datos de composición corporal.</Text>
+            <Text style={styles.textred}>No hay datos de composición corporal.</Text>
           )}
         </Card.Content>
       </Card>
@@ -150,6 +157,11 @@ export default function ProgressScreen() {
       <Button mode='contained' style={styles.button} labelStyle={styles.texts} onPress={handleClases} loading={loading} disabled={loading}>
         Registrar Clases
       </Button>
+
+      <Button mode='contained' style={styles.button} labelStyle={styles.texts} onPress={handleCompo} loading={loading} disabled={loading}>
+        Registrar composición corporal
+      </Button>
+
     </ScrollView>
   );
 }
@@ -172,6 +184,10 @@ const styles = StyleSheet.create({
   },
   text: {
     fontFamily: 'Poppins_400Regular',
+  },
+  textred: {
+    fontFamily: 'Poppins_400Regular',
+    color: 'red',
   },
   progressBar: {
     marginVertical: 10,

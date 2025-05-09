@@ -50,11 +50,11 @@ export default function MembresiaScreen({ navigation }: MembresiaScreenProps) {
     console.log(`Código de pago generado: ${paymentCode}`);
 
     //CUN: 192.168.10.17:5000
-    //casa: 192.168.20.31:5000
-    //datos  192.168.59.76:5000
+    //casa: 192.168.20.31:5000 exp://192.168.239.76:8081
+    //datos  192.168.239.76:5000 192.168.84.76
     try {
         console.log('Enviando solicitud al backend...');
-        const response = await axios.post('http://192.168.20.31:5000/send-email', {
+        const response = await axios.post('http://192.168.84.76:5000/send-email', {
             email: user.email,
             nombre: user.displayName,
             membresia,

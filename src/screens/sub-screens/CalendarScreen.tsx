@@ -1,5 +1,5 @@
-import React, { useState, useContext, useCallback } from 'react';
-import { View, Text, StyleSheet, ActivityIndicator } from 'react-native';
+import React, { useState, useContext, useCallback, useRef } from 'react';
+import { View, Text, StyleSheet, ActivityIndicator, Alert } from 'react-native';
 import { useNavigation, useFocusEffect } from '@react-navigation/native';
 import { AuthContext } from '../../context/AuthContext';
 import { getFirestore, doc, getDoc } from 'firebase/firestore';
@@ -20,61 +20,78 @@ const CalendarScreen: React.FC = () => {
   const [horaSeleccionada, setHoraSeleccionada] = useState<string | null>(null);
   const [horaFin, setHoraFin] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
+  const alertShown = useRef(false); 
+
 
   useFocusEffect(
     useCallback(() => {
       const fetchCalendario = async () => {
         if (!user) return;
-        setLoading(true);
-
+        setLoading(false);
+  
         const db = getFirestore();
         const docRef = doc(db, 'users', user.uid, 'progress', 'calendario');
-        const docSnap = await getDoc(docRef);
-
-        if (!docSnap.exists()) {
-          navigation.navigate('WeeklySchedule');
+        //const docSnap = await getDoc(docRef);
+  
+       // const data = docSnap.exists() ? docSnap.data() : null;
+        //console.log('Datos obtenidos de Firestore:', data);
+  
+      /*   if (!data || !data.selectedDays?.length || !data.horaSeleccionada) {
+          if (!alertShown.current) { 
+            alertShown.current = true; 
+            Alert.alert(
+              'Datos incompletos',
+              'Para ingresar a tu progreso, primero debes seleccionar tus días de entrenamiento, el tiempo diario y la hora de inicio.',
+              [
+                { text: 'Seleccionar días y tiempo', onPress: () => navigation.navigate('WeeklySchedule') },
+                { text: 'Seleccionar hora de inicio', onPress: () => navigation.navigate('TimePicker') },
+              ],
+              { cancelable: false }
+            );
+          }
+          setLoading(false);
           return;
-        }
+        } */
+  
+        // ✅ Desde aquí TypeScript ya sabe que `data` NO es null
 
-        const data = docSnap.data();
-        console.log('Datos obtenidos de Firestore:', data);
+        const calendarioSnap = await getDoc(docRef);
 
-        if (!data.horaSeleccionada) {
-          navigation.navigate('TimePicker');
-          return;
-        }
-
+    if (calendarioSnap.exists()) {
+        const data = calendarioSnap.data();
         setHoraSeleccionada(data.horaSeleccionada);
-
+  
         const TimePerDay = data.TimePerDay || 45;
         const parsedTime = moment(data.horaSeleccionada, 'hh:mm A');
         const horaFinal = parsedTime.clone().add(TimePerDay, 'minutes').format('hh:mm A');
         setHoraFin(horaFinal);
-
-        const diasSeleccionados = data.selectedDays || [];
+  
+        const diasSeleccionados = data.selectedDays;
         console.log('Días seleccionados desde Firestore:', diasSeleccionados);
-
+  
         const fechasMarcadas: { [key: string]: { selected: boolean, selectedColor: string } } = {};
         const ahora = moment();
-
+  
         for (let i = 0; i < 180; i++) {
           const dia = moment(ahora).add(i, 'days');
           const nombreDia = dia.format('ddd').replace('.', '');
           const capitalizado = nombreDia.charAt(0).toUpperCase() + nombreDia.slice(1);
-
+  
           if (diasSeleccionados.includes(capitalizado)) {
             const fechaISO = dia.format('YYYY-MM-DD');
             fechasMarcadas[fechaISO] = { selected: true, selectedColor: '#3B82F6' };
           }
         }
-
+  
         setSelectedDays(fechasMarcadas);
-        setLoading(false);
+        //setLoading(false);
+      }
       };
-
+  
       fetchCalendario();
     }, [user, navigation])
   );
+  
 
   const handleDias = async () => {
     setLoading(true);
@@ -101,12 +118,17 @@ const CalendarScreen: React.FC = () => {
       <Text  style={styles.title}>Calendario</Text>
 
       <View style={styles.timeContainer}>
-        <Text style={styles.timeText}>Inicio: {horaSeleccionada}</Text>
-        <Text style={styles.timeText}> - </Text>
-        <Text style={styles.timeText}>Fin: {horaFin}</Text>
+        {horaSeleccionada && horaFin ? (
+          <>
+            <Text style={styles.timeText}>Inicio: {horaSeleccionada}</Text>
+            <Text style={styles.timeText}> - </Text>
+            <Text style={styles.timeText}>Fin: {horaFin}</Text>
+          </>
+        ) : (
+          <Text style={styles.textred}>No hay datos disponibles</Text>
+        )}
       </View>
-        
-
+      
       <Calendar
         markedDates={selectedDays}
         theme={{
@@ -167,6 +189,10 @@ const styles = StyleSheet.create({
     width: '80%',
     alignSelf: 'center', // Esto lo centra horizontalmente
     backgroundColor: '#2ECC71',
+  },
+  textred: {
+    fontFamily: 'Poppins_400Regular',
+    color: 'red',
   },
   
 });

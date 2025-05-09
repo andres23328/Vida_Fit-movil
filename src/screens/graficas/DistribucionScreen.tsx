@@ -1,12 +1,19 @@
 import React, { useEffect, useState, useContext } from 'react';
-import { View, Text, Dimensions, TextInput, Alert, TouchableOpacity, StyleSheet, ScrollView } from 'react-native';
+import {
+  View,
+  Text,
+  Dimensions,
+  TextInput,
+  Alert,
+  TouchableOpacity,
+  StyleSheet,
+  ScrollView,
+} from 'react-native';
 import { PieChart } from 'react-native-chart-kit';
 import { db } from '../../config/firebase';
 import { doc, getDoc, setDoc } from 'firebase/firestore';
 import { AuthContext } from '../../context/AuthContext';
 import { Button } from 'react-native-paper';
-
-const ITEMS_PER_PAGE = 5;
 
 const DistribucionScreen = () => {
   const [parte, setParte] = useState('');
@@ -63,34 +70,26 @@ const DistribucionScreen = () => {
     );
 
     if (parteExistenteIndex !== -1) {
-      // Eliminar temporalmente el porcentaje actual para evitar sumarlo dos veces
       nuevaData.splice(parteExistenteIndex, 1);
     }
 
-    // Agrupar datos en bloques de 100%
-    const grupos = agruparPorPorcentaje(nuevaData);
-
-    let ultimoGrupo = grupos[grupos.length - 1] || [];
-    const totalUltimoGrupo = ultimoGrupo.reduce((acc, item) => acc + item.population, 0);
-
-    if (totalUltimoGrupo + porcentajeNumerico > 100) {
-      // Comenzar un nuevo grupo
-      grupos.push([{ name: parteLimpia, population: porcentajeNumerico, timestamp: new Date() }]);
-    } else {
-      ultimoGrupo.push({ name: parteLimpia, population: porcentajeNumerico, timestamp: new Date() });
-    }
-
-    // Aplanar grupos
-    const dataFinal = grupos.flat();
+    nuevaData.push({
+      name: parteLimpia,
+      population: porcentajeNumerico,
+      timestamp: new Date(),
+    });
 
     setGuardando(true);
-    await guardarDistribucion(dataFinal);
-    setData([...dataFinal]);
+    await guardarDistribucion(nuevaData);
+    setData(nuevaData);
     setParte('');
     setPorcentaje('');
     setGuardando(false);
 
-    Alert.alert('Guardado', `"${parteLimpia}" con ${porcentaje}% fue ${parteExistenteIndex !== -1 ? 'actualizado' : 'agregado'}.`);
+    Alert.alert(
+      'Guardado',
+      `"${parteLimpia}" con ${porcentaje}% fue ${parteExistenteIndex !== -1 ? 'actualizado' : 'agregado'}.`
+    );
   };
 
   const eliminarParte = async (index: number) => {
@@ -100,31 +99,10 @@ const DistribucionScreen = () => {
     Alert.alert('Eliminado', 'El registro fue eliminado.');
   };
 
-  const agruparPorPorcentaje = (data: any[]) => {
-    const grupos: any[][] = [];
-    let grupoActual: any[] = [];
-    let total = 0;
-
-    for (const item of data) {
-      if (total + item.population > 100) {
-        grupos.push(grupoActual);
-        grupoActual = [];
-        total = 0;
-      }
-      grupoActual.push(item);
-      total += item.population;
-    }
-
-    if (grupoActual.length > 0) {
-      grupos.push(grupoActual);
-    }
-
-    return grupos;
-  };
-
-  const gruposDeGraficos = agruparPorPorcentaje(data);
-  const totalPages = gruposDeGraficos.length;
-  const grupoActual = gruposDeGraficos[currentPage - 1] || [];
+  const ITEMS_PER_PAGE = 3;
+  const totalPages = Math.ceil(data.length / ITEMS_PER_PAGE);
+  const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
+  const grupoActual = data.slice(startIndex, startIndex + ITEMS_PER_PAGE);
 
   const renderPagination = () => (
     <View style={styles.paginationContainer}>
@@ -134,7 +112,12 @@ const DistribucionScreen = () => {
           style={[styles.pageButton, currentPage === page && styles.pageButtonActive]}
           onPress={() => setCurrentPage(page)}
         >
-          <Text style={[styles.pageButtonText, currentPage === page && styles.pageButtonTextActive]}>
+          <Text
+            style={[
+              styles.pageButtonText,
+              currentPage === page && styles.pageButtonTextActive,
+            ]}
+          >
             {page}
           </Text>
         </TouchableOpacity>
@@ -146,28 +129,22 @@ const DistribucionScreen = () => {
     <ScrollView contentContainerStyle={{ padding: 20, backgroundColor: '#F4F6FA', paddingBottom: 100 }}>
       <Text style={styles.title}>Distribución de Entrenamiento</Text>
 
-      {grupoActual.reduce((acc, item) => acc + item.population, 0) === 100 ? (
-        <PieChart
-          data={grupoActual.map((item, index) => ({
-            name: item.name,
-            population: item.population,
-            color: `hsl(${(index * 360) / grupoActual.length}, 70%, 50%)`,
-            legendFontColor: '#7F7F7F',
-            legendFontSize: 12,
-          }))}
-          width={Dimensions.get('window').width - 40}
-          height={220}
-          chartConfig={{ color: () => '#000' }}
-          accessor="population"
-          backgroundColor="transparent"
-          paddingLeft="15"
-          absolute
-        />
-      ) : (
-        <Text style={{ textAlign: 'center', marginVertical: 16, fontFamily: 'Poppins_400Regular', color: 'red' }}>
-          El total debe ser 100% para mostrar el gráfico. Actualmente: {grupoActual.reduce((acc, item) => acc + item.population, 0)}%
-        </Text>
-      )}
+      <PieChart
+        data={grupoActual.map((item, index) => ({
+          name: item.name,
+          population: item.population,
+          color: `hsl(${(index * 360) / grupoActual.length}, 70%, 50%)`,
+          legendFontColor: '#7F7F7F',
+          legendFontSize: 12,
+        }))}
+        width={Dimensions.get('window').width - 40}
+        height={220}
+        chartConfig={{ color: () => '#000' }}
+        accessor="population"
+        backgroundColor="transparent"
+        paddingLeft="15"
+        absolute
+      />
 
       <TextInput
         placeholder="Parte del cuerpo (ej. Piernas)"
@@ -234,7 +211,9 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     fontFamily: 'Poppins_600SemiBold',
   },
-  text: { fontFamily: 'Poppins_600SemiBold' },
+  text: {
+    fontFamily: 'Poppins_600SemiBold',
+  },
   input: {
     borderColor: '#ccc',
     borderWidth: 1,

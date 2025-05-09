@@ -43,9 +43,9 @@ export default function Chatbot({ isChatOpen, setIsChatOpen }: ChatbotProps) {
     setInputText("");
     //CUN: 192.168.10.17:5000
     //casa: 192.168.20.31:5000
-    //datos:  192.168.59.76:5000
+    //datos:  192.168.239.76:5000
     try {
-      const response = await fetch("http://192.168.20.31:5000/api/chat", {
+      const response = await fetch("http://192.168.84.76:5000/api/chat", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ message: inputText }),

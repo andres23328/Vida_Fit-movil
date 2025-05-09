@@ -54,7 +54,8 @@ app.post('/send-email', async (req, res) => {
       doc.text(`Código de pago: ${paymentCode}`);
       doc.moveDown();
   
-      const qrData = `https://validacion.com/pago/${paymentCode}`;
+      //const qrData = `https://validacion.com/pago/${paymentCode}`;
+      const qrData = `http://compensar-frontend-itpdlc-74359e-69-197-144-173.traefik.me/`;
       const qrImage = await QRCode.toDataURL(qrData);
       doc.image(qrImage, { width: 80, align: "center" });
       doc.moveDown(7);

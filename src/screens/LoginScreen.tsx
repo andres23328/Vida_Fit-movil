@@ -10,6 +10,7 @@ type RootStackParamList = {
   Login: undefined;
   Home: undefined;
   Main: undefined;
+  Welcome: undefined;
 };
 
 type LoginScreenNavigationProp = StackNavigationProp<RootStackParamList, 'Login'>;
@@ -40,6 +41,11 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ navigation }) => {
     }
   }, [user, navigation]);
   
+  const handleWelcome = async () => {
+    setLoading(true);
+    navigation.navigate('Welcome');
+    setLoading(false);
+  };
 
   const handleLogin = async () => {
     try {
@@ -110,6 +116,9 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ navigation }) => {
 {/*       <TouchableOpacity style={styles.toggleButton} onPress={() => setDarkMode(!darkMode)}>
         <Text style={styles.toggleButtonText}>{darkMode ? 'Modo Claro 🌞' : 'Modo Oscuro 🌙'}</Text>
       </TouchableOpacity> */}
+        <Button mode='contained' style={styles.button} labelStyle={styles.text} onPress={handleWelcome} loading={loading} disabled={loading}>
+          Rgistrarse
+        </Button>
     </View>
   );
 };
@@ -127,7 +136,7 @@ const styles = StyleSheet.create({
   toggleButton: { marginTop: 10, padding: 10, borderRadius: 20, backgroundColor: '#525FE1' },
   toggleButtonText: { color: 'white', textAlign: 'center', fontFamily: 'Poppins_400Regular' },
   text: { fontFamily: 'Poppins_600SemiBold' },
-  button: {backgroundColor: '#2ECC71'},
+  button: {backgroundColor: '#2ECC71', marginTop: 20},
 });
 
 export default LoginScreen;

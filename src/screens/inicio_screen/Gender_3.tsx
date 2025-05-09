@@ -27,7 +27,7 @@ const Gender: React.FC = () => {
           onPress={() => handleSelectGender('Mujer')}
           activeOpacity={0.7}
         >
-          <View style={styles.iconContainer}>
+          <View style={[styles.iconContainer, styles.female]}>
             <Image source={require('../../../assets/imagenes/female_icon.png')} style={styles.icon} />
           </View>
           <Text style={styles.optionText}>Mujer</Text>
@@ -39,7 +39,7 @@ const Gender: React.FC = () => {
           onPress={() => handleSelectGender('Hombre')}
           activeOpacity={0.7}
         >
-          <View style={styles.iconContainer}>
+          <View style={[styles.iconContainer, styles.male]}>
             <Image source={require('../../../assets/imagenes/male-icon.png')} style={styles.icon} />
           </View>
           <Text style={styles.optionText}>Hombre</Text>
@@ -91,13 +91,21 @@ const styles = StyleSheet.create({
   icon: {
     width: 60,
     height: 60,
+    color: "#fff",
     resizeMode: 'contain',
   },
   optionText: {
-    fontSize: 18,
-    color: '#1F2937', // Gris oscuro
-    fontWeight: '600',
+    marginTop: 8,
+    fontSize: 16,
+    color: '#fff', // Gris oscuro
+    textAlign: 'center',
     fontFamily: 'Poppins_400Regular',
+  },
+  female: {
+    backgroundColor: 'rgb(255, 4, 201)', // Gris claro
+  },
+  male: {
+    backgroundColor: '#16A34A', // Verde claro
   },
 });
 

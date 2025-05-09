@@ -98,7 +98,7 @@ const UserInfo: React.FC = () => {
             style={[styles.unitButton, units === 'metric' && styles.activeUnitButton]}
           >
             <Text style={[styles.unitButtonText, units === 'metric' && styles.activeUnitButtonText]}>
-              kg & metros
+              kg & cm
             </Text>
           </TouchableOpacity>
         </View>

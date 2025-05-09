@@ -75,7 +75,7 @@ const sendCSVToBackend = async (userId: string, newCSV: string, allCSV: string) 
   console.log("Todos los usuarios CSV:\n", allCSV);
 
   try {
-    const response = await axios.post('http://192.168.20.31:5000/save-csv', { userId, newCSV, allCSV });
+    const response = await axios.post('http://192.168.84.76:5000/save-csv', { userId, newCSV, allCSV });
     console.log('✅ CSVs guardados en la PC:', response.data);
   } catch (error) {
     console.error('❌ Error al enviar CSVs al backend:', error);
