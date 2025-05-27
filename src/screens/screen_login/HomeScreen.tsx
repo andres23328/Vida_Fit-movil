@@ -229,7 +229,7 @@ export default function HomeScreen() {
         style={[styles.button, isDarkMode ? styles.darkButton : styles.lightButton]}
         labelStyle={isDarkMode ? styles.darkButtonText : styles.lightButtonText}
       >
-        Hacer una Predicción
+        Realizar Predicción
       </Button>
 
 

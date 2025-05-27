@@ -6,7 +6,7 @@ import { doc, getDoc, setDoc } from 'firebase/firestore';
 import { AuthContext } from '../../context/AuthContext';
 import { Button } from 'react-native-paper';
 
-const ITEMS_PER_PAGE = 3;
+const ITEMS_PER_PAGE = 4;
 
 const ProgresoPesoScreen = () => {
   const [pesoActual, setPesoActual] = useState('');

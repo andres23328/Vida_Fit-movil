@@ -64,7 +64,7 @@ const TimePicker: React.FC = () => {
 
       <View style={styles.textContainer}>
         <Text style={styles.title}>Los recordatorios de entrenamiento te mantienen encaminado.</Text>
-        <Text style={styles.subtitle}>Programe notificaciones para alcanzar tus objetivos más rápido!</Text>
+        <Text style={styles.subtitle}>Programa notificaciones para alcanzar tus objetivos más rápido!</Text>
       </View>
 
       <TouchableOpacity style={styles.timeDisplay} onPress={showDatePicker}>

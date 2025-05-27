@@ -17,7 +17,7 @@ const CardItem: React.FC<{ name: string; description: string; darkMode: boolean;
     <TouchableOpacity onPress={() => navigation.navigate(navigateTo as never)} activeOpacity={0.8}>
       <Card style={[styles.card, darkMode ? styles.darkCard : styles.lightCard]}>
         <Card.Content>
-          <Text variant="labelMedium" style={[darkMode ? styles.darkText : styles.lightText]}>
+          <Text  style={[darkMode ? styles.darkText : styles.lightText, styles.cardDesc]}>
             {name}
           </Text>
           <Text style={[darkMode ? styles.darkText : styles.lightText, styles.cardDescCommon]}>
@@ -35,7 +35,7 @@ const DashboardScreen: React.FC = () => {
   const [isChatOpen, setIsChatOpen] = useState<boolean>(false);
 
   // Posición del botón del chat
-  const chatPosition = useRef(new Animated.ValueXY({ x: 300, y: 700 })).current;
+  const chatPosition = useRef(new Animated.ValueXY({ x: 300, y: 650 })).current;
 
   // PanResponder para mover el botón
   const panResponder = useRef(
@@ -55,11 +55,11 @@ const DashboardScreen: React.FC = () => {
   ).current;
 
   const cards = [
-    { name: "IMC", description: "Consulta tu Índice de Masa Corporal.", navigateTo: "IMCScreen" },
-    { name: "Gráficas", description: "Visualiza tu progreso en gráficas.", navigateTo: "Graficas" },
-    { name: "Cuerpo Humano", description: "Modifica y analiza tu masa corporal.", navigateTo: "BodyScreen" },
-    { name: "Reporte", description: "📊 Reporte de Peso Mensual.", navigateTo: "Reporte" },
-    { name: "Preguntas", description: "Formulario para predecir ejercicios con IA.", navigateTo: "Goals" }, // Ajustado aquí
+    { name: "📏IMC", description: "Consulta tu Índice de Masa Corporal.", navigateTo: "IMCScreen" },
+    { name: "📈Gráficas", description: "Visualiza tu progreso.", navigateTo: "Graficas" },
+    { name: "🏃Cuerpo Humano", description: "Modifica y analiza tu masa corporal.", navigateTo: "BodyScreen" },
+    { name: "📊Reporte", description: "Reporte de Peso Mensual.", navigateTo: "Reporte" },
+    { name: "💬Preguntas", description: "Formulario para recomendar ejercicios.", navigateTo: "Goals" }, // Ajustado aquí
   ];
 
   return (
@@ -105,10 +105,10 @@ const styles = StyleSheet.create({
   title: { textAlign: 'center', marginVertical: 30, fontSize: 24, fontFamily: 'Poppins_600SemiBold' },
   cardContainer: { flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'space-evenly' },
   cardWrapper: { width: '48%', marginBottom: 20 },
-  card: { borderRadius: 10, height: 250, padding: 15 },
+  card: { borderRadius: 10, height: 230, padding: 15 },
   lightBackground: { backgroundColor: 'white' },
   darkBackground: { backgroundColor: '#121212' },
-  lightCard: { backgroundColor: '#d1fae5' },
+  lightCard: { backgroundColor: 'rgba(113, 247, 180, 0.63)' },
   darkCard: { backgroundColor: '#333333' },
   lightText: { color: 'black' },
   darkText: { color: 'white' },
@@ -127,7 +127,18 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontFamily: 'Poppins_400Regular',
     marginTop: 8,
+    textAlign: 'center',
   },
+  cardDesc: {
+    fontSize: 16,
+    fontFamily: 'Poppins_600SemiBold',
+    marginTop: 8,
+    textAlign: 'center',
+  },
+
+
+
+
 });
 
 export default DashboardScreen;

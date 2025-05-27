@@ -3,14 +3,14 @@ const { GoogleGenerativeAI } = require("@google/generative-ai");
 require("dotenv").config();
 
 const router = express.Router();
-const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
+const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEYS);
 
 router.post("/comida-bebidas", async (req, res) => {
     try {
         const { preferencias, restricciones } = req.body;
         console.log("📥 Request recibido:", { preferencias, restricciones });
 
-        if (!process.env.GEMINI_API_KEY) {
+        if (!process.env.GEMINI_API_KEYS) {
             console.error("❌ Error: Clave de API de Gemini no definida");
             return res.status(500).json({ error: "Clave de API no configurada" });
         }

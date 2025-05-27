@@ -12,7 +12,7 @@ const Welcome: React.FC = () => {
     <View style={styles.container}>
       {/* Logo */}
       <View style={styles.logoContainer}>
-        <Image source={require('../../../assets/imagenes/logo.jpeg')} style={styles.logo} />
+        <Image source={require('../../../assets/imagenes/vida_fit.png')} style={styles.logo} />
       </View>
 
       {/* Contenido Principal */}
@@ -56,6 +56,8 @@ const styles = StyleSheet.create({
     marginTop: 80,
   },
   logo: {
+    top: 100,
+    left: 20,
     width: 240,
     height: 240,
     resizeMode: 'contain',

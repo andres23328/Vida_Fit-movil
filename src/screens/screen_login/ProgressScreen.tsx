@@ -101,7 +101,7 @@ export default function ProgressScreen() {
       <Card style={styles.card}>
         <Card.Content>
           <Text variant="titleLarge" style={styles.text}>Asistencia</Text>
-          <ProgressBar progress={attendanceProgress} style={styles.progressBar} />
+          <ProgressBar progress={attendanceProgress} style={styles.progressBar}  color='#3B82F6'/>
           <Text style={[styles.text, styles.progressText]}>
             {clasesCompletadas} de {totalClases} clases completadas
           </Text>
@@ -115,7 +115,7 @@ export default function ProgressScreen() {
           {clasesReservadas.length > 0 ? (
             clasesReservadas.map((clase, index) => (
               <View key={index} style={styles.claseItem}>
-                <Checkbox status="checked" />
+                <Checkbox status="checked"  color='#3B82F6'/>
                 <View>
                   <Text style={styles.text}>{clase.name} - {clase.time}</Text>
                   <Text style={[styles.text, styles.instructor]}>{clase.instructor}</Text>

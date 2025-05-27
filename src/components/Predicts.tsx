@@ -86,14 +86,15 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   title: {
-    fontSize: 14,
+    fontSize: 20,
     fontWeight: "600",
     fontFamily: 'Poppins_600SemiBold',
   },
   content: {
-    fontSize: 18,
-    fontWeight: "600",
-    fontFamily: 'Poppins_600SemiBold',
+    fontSize: 20,
+/*     fontWeight: "600",
+    fontFamily: 'Poppins_600SemiBold', */
+    fontFamily: 'Poppins_400Regular',
   },
   tooltipButton: {
     position: "absolute",

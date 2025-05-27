@@ -72,9 +72,9 @@ const BodyScreen: React.FC = () => {
             value={bodyParts[part]}
             onSlidingComplete={(value) => handleChange(part, value)}
             style={styles.slider}
-            minimumTrackTintColor="#6200ee"
+            minimumTrackTintColor="#3B82F6"
             maximumTrackTintColor="#cccccc"
-            thumbTintColor="#6200ee"
+            thumbTintColor="#3B82F6"
           />
         </View>
       ))}
@@ -86,23 +86,23 @@ const BodyScreen: React.FC = () => {
           labelStyle={styles.buttonText}
           icon="chart-donut"
           onPress={() => navigation.navigate('Graficas', { initialTab: 'distribucion' })}
-          loading={loading}
-          disabled={loading}
         >
           Ver Distribución
         </Button>
       </View>
-
-      <Button
-        mode="contained"
-        style={styles.button}
-        labelStyle={styles.buttonText}
-        onPress={handleGuardarCambios}
-        loading={loading}
-        disabled={loading}
-      >
-        Guardar Cambios
-      </Button>
+      
+      <View style={styles.buttonContainer}>
+        <Button
+          mode="contained"
+          style={styles.button}
+          labelStyle={styles.buttonText}
+          onPress={handleGuardarCambios}
+          loading={loading}
+          disabled={loading}
+        >
+          Guardar Cambios
+        </Button>
+      </View>
     </View>
   );
 };
@@ -127,10 +127,13 @@ const styles = StyleSheet.create({
     width: '100%',
   },
   buttonContainer: {
-    marginVertical: 20,
+    marginVertical: 5,
     alignItems: 'center',
   },
   button: {
+    width: '80%',
+    height: 45,
+    justifyContent: 'center',
     backgroundColor: '#2ECC71',
   },
   buttonText: {

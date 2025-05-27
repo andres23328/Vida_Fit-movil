@@ -137,7 +137,7 @@ export default function SplashScreen({ onFinish }: SplashScreenProps) {
       {/* Contenedor del logo con ref */}
       <View ref={logoContainerRef}>
         <Animatable.Image
-          source={require('../../../assets/imagenes/logo.jpeg')}
+          source={require('../../../assets/imagenes/vida_fit.png')}
           animation="bounceIn"
           duration={1500}
           style={styles.logo}

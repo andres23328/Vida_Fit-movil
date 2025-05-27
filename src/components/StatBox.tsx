@@ -45,14 +45,16 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   title: {
-    fontSize: 14,
+    fontSize: 20,
+    fontWeight: "600",
     color: "#333",
     fontFamily: 'Poppins_600SemiBold',
   },
   value: {
     fontSize: 20,
-    fontWeight: "600",
-    fontFamily: 'Poppins_600SemiBold',
+/*     fontWeight: "600",
+    fontFamily: 'Poppins_600SemiBold', */
+    fontFamily: 'Poppins_400Regular',
   },
   infoIcon: {
     position: "absolute",

@@ -78,7 +78,7 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ navigation }) => {
 
   return (
     <View style={[styles.padre, darkMode ? styles.darkBackground : styles.lightBackground]}>
-      <Image source={require('../../assets/imagenes/logo.jpeg')} style={styles.profile} />
+      <Image source={require('../../assets/imagenes/vida_fit.png')} style={styles.profile} />
       <View style={[styles.tarjeta, darkMode ? styles.darkCard : styles.lightCard]}>
         <TextInput
           label='Email'
@@ -116,8 +116,8 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ navigation }) => {
 {/*       <TouchableOpacity style={styles.toggleButton} onPress={() => setDarkMode(!darkMode)}>
         <Text style={styles.toggleButtonText}>{darkMode ? 'Modo Claro 🌞' : 'Modo Oscuro 🌙'}</Text>
       </TouchableOpacity> */}
-        <Button mode='contained' style={styles.button} labelStyle={styles.text} onPress={handleWelcome} loading={loading} disabled={loading}>
-          Rgistrarse
+        <Button mode='contained' style={styles.button} labelStyle={styles.text} onPress={handleWelcome} >
+          Registrarse
         </Button>
     </View>
   );

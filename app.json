@@ -4,10 +4,10 @@
     "slug": "gym-management-app",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/imagenes/logo.jpeg",
+    "icon": "./assets/imagenes/vida_fit.png",
     "userInterfaceStyle": "light",
     "splash": {
-      "image": "./assets/imagenes/logo.jpeg",
+      "image": "./assets/imagenes/vida_fit.png",
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
@@ -20,7 +20,7 @@
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./assets/imagenes/logo.jpeg",
+        "foregroundImage": "./assets/imagenes/vida_fit.png",
         "backgroundColor": "#ffffff"
       },
       "package": "com.andres23328.vidafit",

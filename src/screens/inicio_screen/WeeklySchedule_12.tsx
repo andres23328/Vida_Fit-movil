@@ -119,9 +119,9 @@ const WeeklySchedule: React.FC = () => {
           onSlidingComplete={handleSliderRelease}
         />
         <View style={styles.sliderLabels}>
-          <Text style={styles.sliderLabel}>baja{'\n'}eficacia</Text>
-          <Text style={styles.sliderLabel}>meida{'\n'}eficiencia</Text>
-          <Text style={styles.sliderLabel}>alta{'\n'}eficiencia</Text>
+          <Text style={styles.sliderLabel}>Baja{'\n'}eficiencia</Text>
+          <Text style={styles.sliderLabel}>Media{'\n'}eficiencia</Text>
+          <Text style={styles.sliderLabel}>Alta{'\n'}eficiencia</Text>
         </View>
       </View>
 

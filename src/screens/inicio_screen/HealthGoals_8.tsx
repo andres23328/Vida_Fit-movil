@@ -73,7 +73,7 @@ const HealthGoals: React.FC = () => {
       Alert.alert('¡Éxito!', 'Respuestas guardadas.');
       dispatch(resetForm());
       dispatch(resetSelectedGoals());
-      navigation.replace("Home");// Redirige a la pantalla Home
+      navigation.reset({ index: 0,  routes: [{ name: 'Main', state: { index: 0, routes: [{ name: 'Home' }] } }], });
     } catch (error) {
       console.error('❌ Error al guardar respuestas:', error);
       Alert.alert('Error', 'No se pudo guardar las respuestas.');
@@ -192,7 +192,7 @@ const styles = StyleSheet.create({
     marginBottom: 12,
   },
   selectedOption: {
-    backgroundColor: '#D1D5DB',
+    backgroundColor: 'rgba(255, 216, 216, 0.45)',
   },
   icon: {
     fontSize: 24,

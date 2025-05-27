@@ -4,7 +4,7 @@ import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { createDrawerNavigator, DrawerContentComponentProps } from "@react-navigation/drawer";
-import { Provider as PaperProvider, MD3DarkTheme, MD3LightTheme, IconButton } from 'react-native-paper';
+import { Provider as PaperProvider, MD3DarkTheme, MD3LightTheme, IconButton, Title } from 'react-native-paper';
 import { onAuthStateChanged, signOut, User } from 'firebase/auth';
 import { auth } from './src/config/firebase';
 import { Provider } from 'react-redux';
@@ -255,16 +255,16 @@ export default function App() {
               <Stack.Navigator initialRouteName="Welcome"  screenOptions={{headerTitleStyle: {fontFamily: 'Poppins_600SemiBold', fontSize: 20,},}}>
                 {/* Pantallas de bienvenida */}
                 <Stack.Screen name="Welcome" component={Welcome} options={{ headerShown: false }}/>
-                <Stack.Screen name="Goals" component={Goals} />
-                <Stack.Screen name="Gender" component={Gender} />
-                <Stack.Screen name="Location" component={Location} />
-                <Stack.Screen name="ExerciseHistory" component={ExerciseHistory} />
-                <Stack.Screen name="TrainingIntensity" component={TrainingIntensity} />
-                <Stack.Screen name="UserInfo" component={UserInfo} />
-                <Stack.Screen name="HealthGoals" component={HealthGoals} />
+                <Stack.Screen name="Goals" component={Goals} options={ {title:"Metas"}}  />
+                <Stack.Screen name="Gender" component={Gender} options={ {title:"Género"}} />
+                <Stack.Screen name="Location" component={Location} options={ {title:"Lugar"}} />
+                <Stack.Screen name="ExerciseHistory" component={ExerciseHistory} options={ {title:"Desarrollo"}} />
+                <Stack.Screen name="TrainingIntensity" component={TrainingIntensity} options={ {title:"Intensidad"}}  />
+                <Stack.Screen name="UserInfo" component={UserInfo} options={ {title:"IMC"}} />
+                <Stack.Screen name="HealthGoals" component={HealthGoals} options={ {title:"Interés"}} />
                 <Stack.Screen name="GoogleFitSetup" component={GoogleFitSetup} />
                 <Stack.Screen name="GoogleFitAuth" component={GoogleFitAuth} />
-                <Stack.Screen name="Registration" component={Registration} />
+                <Stack.Screen name="Registration" component={Registration} options={ {title:"Registro"}} />
                 <Stack.Screen name="WeeklySchedule" component={WeeklySchedule} options={{ headerShown: false }} />
                 <Stack.Screen name="SchedulePreference" component={SchedulePreference} />
                 <Stack.Screen name="TimePicker" component={TimePicker} options={{ headerShown: false }} />
@@ -284,12 +284,12 @@ export default function App() {
                 {/* Pantallas adicionales */}
                 <Stack.Screen name="Home" component={HomeScreen} />
                 <Stack.Screen name="MembershipScreen" component={MembershipScreen} />
-                <Stack.Screen name="IMCScreen" component={IMCScreen} />
+                <Stack.Screen name="IMCScreen" component={IMCScreen} options={ {title:"IMC"}}/>
                 <Stack.Screen name="ChartsScreen" component={ChartsScreen} />
-                <Stack.Screen name="BodyScreen" component={BodyScreen} />
-                <Stack.Screen name="Predict" component={Predict} />
+                <Stack.Screen name="BodyScreen" component={BodyScreen} options={ {title:"Composición corporal"}} />
+                <Stack.Screen name="Predict" component={Predict} options={ {title:"Recomendaciones"}}/>
                 <Stack.Screen name="Reporte" component={Reporte} />
-                <Stack.Screen name="ClassesScreen" component={ClassesScreen} />
+                <Stack.Screen name="ClassesScreen" component={ClassesScreen} options={ {title:"Clases"}}/>
                 <Stack.Screen name="ProgressScreen" component={ProgressScreen} />
               </Stack.Navigator>
             </NavigationContainer>
